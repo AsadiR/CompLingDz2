@@ -64,29 +64,33 @@ def get_dict(words):
     return d
 
 
-def count_all_words(dict):
+def count_all_ngrams(dict):
     sum = 0
     for key in dict:
         sum += dict[key]
     return sum
 
 
-def count_word_types(dict):
+def count_ngram_types(dict):
     return len(dict)
 
 
-def calculate_perplexity(test_words, d):
+def calculate_perplexity(test_words, d_of_p):
     N = len(test_words)
     # s = reduce((lambda x, y: x+math.log2(d[y])), [0] + test_words)
     s = 0
     for w in test_words:
-        s += math.log2(d[w])
+        s += math.log2(d_of_p[w])
     return 2**(-s/N)
 
 def write_list_in_file(l, name):
     with open(name, 'w') as f:
         for elem in l:
             f.write(str(elem[0]) + ' = ' + str(elem[1]) + '\n')
+
+def write_dict_in_file(d, name):
+    sorted_list = sorted(d.items(), key=lambda x: x[1])[::-1]
+    write_list_in_file(sorted_list, name)
 
 
 '''
@@ -95,23 +99,25 @@ def write_list_in_file(l, name):
 т.е. во всех трех корпусах. По этой причине при вычислении вероятностей могут встретиться униграммы с нулевой частотой,
 однако ввиду сглаживания вероятность их появления не будет нулевой.
 '''
-def get_prob_dict(d, d_for_learning, param_lambda, number_of_types):
+def get_prob_dict(d, d_for_learning, param_lambda):
     """
     :param d: словарь частот для всех слов из произведения
     :param d_for_learning: словарь частот для обучения
     :param param_lambda: параметр лямбда
-    :param number_of_types: количество типов n-грамм
     :return: словарь вероятностей
     """
 
-    N = len(d_for_learning)
+    # number of words in dict for learning
+    nof_in_dfl = count_all_ngrams(d_for_learning)
+    number_of_types = count_ngram_types(d)
+
     d_of_p = {}
     for key in d:
         if key in d_for_learning:
             f = d_for_learning[key]
         else:
             f = 0
-        p = (f + param_lambda) / (N + number_of_types * param_lambda)
+        p = (f + param_lambda) / (nof_in_dfl + number_of_types * param_lambda)
         d_of_p[key] = p
     return d_of_p
 
@@ -121,7 +127,7 @@ def find_the_best_param(d, d_for_learning, held_out_words, number_of_types, rb, 
     cur_max = -math.inf
     N = len(held_out_words)
     for param_lambda in frange(rb, re, st):
-        d_of_p = get_prob_dict(d, d_for_learning, param_lambda, number_of_types)
+        d_of_p = get_prob_dict(d, d_for_learning, param_lambda)
         sum_of_logs = 0
         for w in held_out_words:
             sum_of_logs += math.log2(d_of_p[w])
@@ -144,21 +150,19 @@ if __name__ == "__main__":
     d_for_learning = get_dict(parts[0])
     d_hold_out = get_dict(parts[1])
     d_for_test = get_dict(parts[2])
-    number_of_types = count_word_types(d)
+    number_of_types = count_ngram_types(d)
 
     '''
     Теперь подберем параметр так на специально выделенном корпусе.
     '''
     held_out_words = parts[1]
-    param = find_the_best_param(d, d_for_learning, held_out_words, number_of_types, 0.01, 0.3, 0.01)
-    d_of_p =  get_prob_dict(d, d_for_learning, param, number_of_types)
+    param = find_the_best_param(d, d_for_learning, held_out_words, number_of_types, 1, 2, 0.01)
+    d_of_p =  get_prob_dict(d, d_for_learning, param)
 
     '''
     Записываем словарь вероятностей по Линдстоуну в файл
     '''
-
-    sorted_list = sorted(d_of_p.items(), key=lambda x: x[1])[::-1]
-    write_list_in_file(sorted_list, out_file)
+    write_dict_in_file(d_of_p, out_file)
 
     '''
     Теперь необходимо вычислить перплексию.
