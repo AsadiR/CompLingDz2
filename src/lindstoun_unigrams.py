@@ -3,7 +3,7 @@ import math
 
 
 fname = 'CrimeAndPunishment.txt'
-out_file = 'results/unigram_pr_output'
+out_file = 'results/lindstoun_unigram_pr_output'
 
 
 def frange(start, end=None, inc=None):

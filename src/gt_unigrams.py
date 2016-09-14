@@ -1,11 +1,11 @@
-from unigrams import fname
-from unigrams import read_file
-from unigrams import split_proportionally
-from unigrams import count_ngram_types
-from unigrams import count_all_ngrams
-from unigrams import get_dict
-from unigrams import write_dict_in_file
-from unigrams import calculate_perplexity
+from lindstoun_unigrams import fname
+from lindstoun_unigrams import read_file
+from lindstoun_unigrams import split_proportionally
+from lindstoun_unigrams import count_ngram_types
+from lindstoun_unigrams import count_all_ngrams
+from lindstoun_unigrams import get_dict
+from lindstoun_unigrams import write_dict_in_file
+from lindstoun_unigrams import calculate_perplexity
 
 out_file = 'results/gt_unigram_pr_output'
 

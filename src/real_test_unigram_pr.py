@@ -1,9 +1,9 @@
-from unigrams import fname
-from unigrams import read_file
-from unigrams import split_proportionally
-from unigrams import count_all_ngrams
-from unigrams import get_dict
-from unigrams import write_list_in_file
+from lindstoun_unigrams import fname
+from lindstoun_unigrams import read_file
+from lindstoun_unigrams import split_proportionally
+from lindstoun_unigrams import count_all_ngrams
+from lindstoun_unigrams import get_dict
+from lindstoun_unigrams import write_list_in_file
 
 out_file = 'results/real_unigram_pr_output'
 

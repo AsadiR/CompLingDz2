@@ -1,13 +1,13 @@
-from unigrams import fname
-from unigrams import read_file
-from unigrams import split_proportionally
-from unigrams import count_ngram_types
-from unigrams import write_dict_in_file
-from unigrams import find_the_best_param
-from unigrams import get_prob_dict
-from unigrams import calculate_perplexity
+from lindstoun_unigrams import fname
+from lindstoun_unigrams import read_file
+from lindstoun_unigrams import split_proportionally
+from lindstoun_unigrams import count_ngram_types
+from lindstoun_unigrams import write_dict_in_file
+from lindstoun_unigrams import find_the_best_param
+from lindstoun_unigrams import get_prob_dict
+from lindstoun_unigrams import calculate_perplexity
 
-out_file = 'results/bigram_pr_output'
+out_file = 'results/lindstoun_bigram_pr_output'
 
 
 def get_dict_for_bigrams(words):

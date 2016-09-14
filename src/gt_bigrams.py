@@ -1,12 +1,12 @@
-from unigrams import read_file
-from unigrams import split_proportionally
-from unigrams import count_ngram_types
-from unigrams import calculate_perplexity
-from bigrams import get_dict_for_bigrams
-from unigrams import fname
-from unigrams import write_dict_in_file
+from lindstoun_unigrams import read_file
+from lindstoun_unigrams import split_proportionally
+from lindstoun_unigrams import count_ngram_types
+from lindstoun_unigrams import calculate_perplexity
+from lindstoun_bigrams import get_dict_for_bigrams
+from lindstoun_unigrams import fname
+from lindstoun_unigrams import write_dict_in_file
 from gt_unigrams import get_gt_prob_dict
-from bigrams import get_bigrams_list
+from lindstoun_bigrams import get_bigrams_list
 
 
 out_file = 'results/gt_bigram_pr_output'
