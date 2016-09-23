@@ -7,13 +7,16 @@ from lindstoun_unigrams import fname
 from lindstoun_unigrams import write_dict_in_file
 from gt_unigrams import get_gt_prob_dict
 from lindstoun_bigrams import get_bigrams_list
+from lindstoun_unigrams import learning_cs
+from lindstoun_unigrams import hold_out_cs
+from lindstoun_unigrams import test_cs
 
 
-out_file = 'results/gt_bigram_pr_output'
+out_file = 'results/bigrams/gt_bigram_pr_output'
 
 if __name__ == "__main__":
     words = read_file(fname)
-    parts = split_proportionally(words, 60, 20, 20)
+    parts = split_proportionally(words, learning_cs, hold_out_cs, test_cs)
     d = get_dict_for_bigrams(words)
     d_for_learning = get_dict_for_bigrams(parts[0])
     d_hold_out = get_dict_for_bigrams(parts[1])

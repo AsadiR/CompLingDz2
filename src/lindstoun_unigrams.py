@@ -1,9 +1,15 @@
 from functools import reduce
 import math
 
+fname = 'fishes.txt'
+#fname = 'CrimeAndPunishment.txt'
+#fname = 'art_test.txt'
 
-fname = 'CrimeAndPunishment.txt'
-out_file = 'results/lindstoun_unigram_pr_output'
+learning_cs = 50
+hold_out_cs = 25
+test_cs = 25
+
+out_file = 'results/unigrams/lindstoun_unigram_pr_output'
 
 
 def frange(start, end=None, inc=None):
@@ -30,11 +36,12 @@ def read_file(name):
     text = ' '.join(content)
     text = text.lower()
 
-    sym_to_delete = ':,.-?!;№#()[]«»„“…<>—\n'
+    sym_to_delete = ':,.-?!;№#()[]«»„“…<>—\n\xa0'
     for sym in sym_to_delete:
         text = text.replace(sym, '')
 
     words = text.split(' ')
+    #words = list(map((lambda x: x.replace(' ', '')), words))
     words = list(filter(''.__ne__, words))
     return words
 
@@ -80,13 +87,19 @@ def calculate_perplexity(test_words, d_of_p):
     # s = reduce((lambda x, y: x+math.log2(d[y])), [0] + test_words)
     s = 0
     for w in test_words:
-        s += math.log2(d_of_p[w])
+        if w in d_of_p:
+            s += math.log2(d_of_p[w])
+        else:
+            raise Exception("Error")
+            #s += math.log2(d_of_p["#new"])
     return 2**(-s/N)
+
 
 def write_list_in_file(l, name):
     with open(name, 'w') as f:
         for elem in l:
             f.write(str(elem[0]) + ' = ' + str(elem[1]) + '\n')
+
 
 def write_dict_in_file(d, name):
     sorted_list = sorted(d.items(), key=lambda x: x[1])[::-1]
@@ -122,10 +135,9 @@ def get_prob_dict(d, d_for_learning, param_lambda):
     return d_of_p
 
 
-def find_the_best_param(d, d_for_learning, held_out_words, number_of_types, rb, re, st):
+def find_the_best_param(d, d_for_learning, held_out_words, rb, re, st):
     cur_param_max = 0
     cur_max = -math.inf
-    N = len(held_out_words)
     for param_lambda in frange(rb, re, st):
         d_of_p = get_prob_dict(d, d_for_learning, param_lambda)
         sum_of_logs = 0
@@ -145,7 +157,7 @@ if __name__ == "__main__":
     '''
 
     words = read_file(fname)
-    parts = split_proportionally(words, 80, 10, 10)
+    parts = split_proportionally(words, learning_cs, hold_out_cs, test_cs)
     d = get_dict(words)
     d_for_learning = get_dict(parts[0])
     d_hold_out = get_dict(parts[1])
@@ -155,8 +167,14 @@ if __name__ == "__main__":
     '''
     Теперь подберем параметр так на специально выделенном корпусе.
     '''
+
+    start = 0.1
+    step = 0.01
+    end = 0.99 + step
+
     held_out_words = parts[1]
-    param = find_the_best_param(d, d_for_learning, held_out_words, number_of_types, 1, 2, 0.01)
+    param = find_the_best_param(d, d_for_learning, held_out_words, start, end, step)
+    #param = 1
     d_of_p =  get_prob_dict(d, d_for_learning, param)
 
     '''
@@ -166,7 +184,8 @@ if __name__ == "__main__":
 
     '''
     Теперь необходимо вычислить перплексию.
-    Для каждой униграммы из текстового корпуса находим ее вероятность в словаре и подставляем в формулу.
+    Для каждой униграммы из текстового корпуса находим ее вероятность
+    в словаре и подставляем в формулу.
     '''
 
     test_words = parts[2]

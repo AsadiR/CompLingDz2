@@ -6,8 +6,11 @@ from lindstoun_unigrams import write_dict_in_file
 from lindstoun_unigrams import find_the_best_param
 from lindstoun_unigrams import get_prob_dict
 from lindstoun_unigrams import calculate_perplexity
+from lindstoun_unigrams import learning_cs
+from lindstoun_unigrams import hold_out_cs
+from lindstoun_unigrams import test_cs
 
-out_file = 'results/lindstoun_bigram_pr_output'
+out_file = 'results/bigrams/lindstoun_bigram_pr_output'
 
 
 def get_dict_for_bigrams(words):
@@ -29,7 +32,7 @@ def get_bigrams_list(words):
 
 if __name__ == "__main__":
     words = read_file(fname)
-    parts = split_proportionally(words, 60, 20, 20)
+    parts = split_proportionally(words, learning_cs, hold_out_cs, test_cs)
     d = get_dict_for_bigrams(words)
     d_for_learning = get_dict_for_bigrams(parts[0])
     d_hold_out = get_dict_for_bigrams(parts[1])
@@ -37,7 +40,11 @@ if __name__ == "__main__":
     number_of_types = count_ngram_types(d)
 
     held_out_bigrams = get_bigrams_list(parts[1])
-    param = find_the_best_param(d, d_for_learning, held_out_bigrams, number_of_types, 3, 4, 0.01)
+    start = 0.1
+    step = 0.1
+    end = 1 + step
+    #param = find_the_best_param(d, d_for_learning, held_out_bigrams, start, end, step)
+    param = 1
     d_of_p = get_prob_dict(d, d_for_learning, param)
 
     write_dict_in_file(d_of_p, out_file)
