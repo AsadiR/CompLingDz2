@@ -43,8 +43,8 @@ if __name__ == "__main__":
     start = 0.1
     step = 0.1
     end = 1 + step
-    #param = find_the_best_param(d, d_for_learning, held_out_bigrams, start, end, step)
-    param = 1
+    param = find_the_best_param(d, d_for_learning, held_out_bigrams, start, end, step)
+    #param = 1
     d_of_p = get_prob_dict(d, d_for_learning, param)
 
     write_dict_in_file(d_of_p, out_file)
